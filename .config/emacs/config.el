@@ -37,10 +37,10 @@
 
 ;; Install use-package support
       (elpaca elpaca-use-package
-	;; Enable :elpaca use-package keyword.
-	(elpaca-use-package-mode)
-	;; Assume :elpaca t unless otherwise specified.
-	(setq elpaca-use-package-by-default t))
+        ;; Enable :elpaca use-package keyword.
+        (elpaca-use-package-mode)
+        ;; Assume :elpaca t unless otherwise specified.
+        (setq elpaca-use-package-by-default t))
 
       ;; Block until current queue processed.
       (elpaca-wait)
@@ -125,6 +125,28 @@
 (use-package all-the-icons-dired
   :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
 
+(use-package dashboard
+  :ensure t 
+  :init
+  (setq initial-buffer-choice 'dashboard-open)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-banner-logo-title "Emacs Is More Than A Text Editor!")
+  ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+  (setq dashboard-startup-banner "/home/shreevathsa/.config/emacs/images/emacs-dash.png")  ;; use custom image as banner
+  (setq dashboard-center-content nil) ;; set to 't' for centered content
+  (setq dashboard-items '((recents . 5)
+                          (agenda . 5 )
+                          (bookmarks . 3)
+                          (projects . 3)
+                          (registers . 3)))
+  ;;(dashboard-modify-heading-icons '((recents . "file-text")
+  ;;                            (bookmarks . "book")))
+  :config
+  (dashboard-setup-startup-hook))
+
+(use-package diminish)
+
 (set-face-attribute 'default nil
   :font "JetBrains Mono"
   :height 110
@@ -160,10 +182,12 @@
 (global-visual-line-mode t)
 
 (use-package counsel
+  :diminish
   :after ivy
   :config (counsel-mode))
 
 (use-package ivy
+  :diminish
   :bind
   ;; ivy-resume resumes the last Ivy-based completion.
   (("C-c C-r" . ivy-resume)
@@ -203,8 +227,14 @@
 (use-package org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
+(use-package projectile
+  :diminish
+  :config
+  (projectile-mode 1))
+
 (use-package rainbow-mode
-  :hook org-mode prog-mode)
+  :hook org-mode prog-mode
+  :diminish)
 
 (defun reload-init-file ()
   (interactive)
@@ -223,6 +253,7 @@
 (use-package which-key
   :init
     (which-key-mode 1)
+  :diminish
   :config
   (setq which-key-side-window-location 'bottom
 	which-key-sort-order #'which-key-key-order-alpha
