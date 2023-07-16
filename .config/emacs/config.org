@@ -11,6 +11,8 @@
   - [[#load-evil-mode][Load Evil mode]]
   - [[#general-keybindings][General Keybindings]]
 - [[#all-the-icons][ALL THE ICONS]]
+- [[#dashboard][DASHBOARD]]
+- [[#diminish][DIMINISH]]
 - [[#fonts][FONTS]]
 - [[#graphical-user-interface-tweaks][GRAPHICAL USER INTERFACE TWEAKS]]
   - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
@@ -21,6 +23,7 @@
   - [[#disable-electric-indent][Disable Electric Indent]]
   - [[#source-code-block-tag-expansion][Source Code Block Tag Expansion]]
   - [[#enabling-org-bullets][Enabling Org Bullets]]
+- [[#projectile][PROJECTILE]]
 - [[#rainbow-mode][RAINBOW MODE]]
 - [[#reload-emacs][RELOAD EMACS]]
 - [[#sudo-edit][SUDO EDIT]]
@@ -169,6 +172,38 @@ This is an icon set that can be used with dashboard, dired, ibuffer and other Em
   :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
 #+end_src
 
+* DASHBOARD
+Emacs Dashboard is an extensible startup screen showing you recent files, bookmarks, agenda items and an Emacs banner.
+
+#+begin_src emacs-lisp
+(use-package dashboard
+  :ensure t 
+  :init
+  (setq initial-buffer-choice 'dashboard-open)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-banner-logo-title "Emacs Is More Than A Text Editor!")
+  ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+  (setq dashboard-startup-banner "/home/shreevathsa/.config/emacs/images/emacs-dash.png")  ;; use custom image as banner
+  (setq dashboard-center-content nil) ;; set to 't' for centered content
+  (setq dashboard-items '((recents . 5)
+                          (agenda . 5 )
+                          (bookmarks . 3)
+                          (projects . 3)
+                          (registers . 3)))
+  ;;(dashboard-modify-heading-icons '((recents . "file-text")
+  ;;                            (bookmarks . "book")))
+  :config
+  (dashboard-setup-startup-hook))
+#+end_src
+
+* DIMINISH
+This package implements hiding or abbreviation of the modeline displays (lighters) of minor-modes.  With this package installed, you can add ':diminish' to any use-package block to hide that particular mode in the modeline.
+
+#+begin_src emacs-lisp
+(use-package diminish)
+#+end_src
+
 * FONTS
 
 #+begin_src emacs-lisp
@@ -224,9 +259,11 @@ Let's make GNU Emacs look a little better.
 #+begin_src emacs-lisp
   (use-package counsel
     :after ivy
-    :config (counsel-mode))
-  
+    :config (counsel-mode)
+    :diminish)
+
   (use-package ivy
+    :diminish
     :bind
     ;; ivy-resume resumes the last Ivy-based completion.
     (("C-c C-r" . ivy-resume)
@@ -300,13 +337,23 @@ Org-bullets gives us attractive bullets rather than asterisks.
   (use-package org-bullets)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+end_src
+* PROJECTILE
+[[https://github.com/bbatsov/projectile][Projectile]] is a project interaction library for Emacs.  It should be noted that many projectile commands do not work if you have set "fish" as the "shell-file-name" for Emacs.  I had initially set "fish" as the "shell-file-name" in the Vterm section of this config, but oddly enough I changed it to "bin/sh" and projectile now works as expected, and Vterm still uses "fish" because my default user "sh" on my Linux system is "fish".
+
+#+begin_src emacs-lisp
+(use-package projectile
+  :diminish
+  :config
+  (projectile-mode 1))
+#+end_src
 
 * RAINBOW MODE
 Display the actual color as a background for any hex color value (ex. #ffffff).  The code block below enables rainbow-mode in all programming modes (prog-mode) as well as org-mode, which is why rainbow works in this document.  
 
 #+begin_src emacs-lisp
 (use-package rainbow-mode
-  :hook org-mode prog-mode)
+  :hook org-mode prog-mode
+  :diminish)
 #+end_src
 
 * RELOAD EMACS
@@ -343,17 +390,18 @@ The first of the two lines below designates the directory where will place all o
   (use-package which-key
     :init
       (which-key-mode 1)
+    :diminish
     :config
     (setq which-key-side-window-location 'bottom
-	  which-key-sort-order #'which-key-key-order-alpha
-	  which-key-sort-uppercase-first nil
-	  which-key-add-column-padding 1
-	  which-key-max-display-columns nil
-	  which-key-min-display-lines 6
-	  which-key-side-window-slot -10
-	  which-key-side-window-max-height 0.25
-	  which-key-idle-delay 0.8
-	  which-key-max-description-length 25
-	  which-key-allow-imprecise-window-fit t
-	  which-key-separator " → " ))
+          which-key-sort-order #'which-key-key-order-alpha
+          which-key-sort-uppercase-first nil
+          which-key-add-column-padding 1
+          which-key-max-display-columns nil
+          which-key-min-display-lines 6
+          which-key-side-window-slot -10
+          which-key-side-window-max-height 0.25
+          which-key-idle-delay 0.8
+          which-key-max-description-length 25
+          which-key-allow-imprecise-window-fit t
+          which-key-separator " → " ))
 #+end_src
