@@ -29,6 +29,7 @@
 - [[#sudo-edit][SUDO EDIT]]
 - [[#theme][THEME]]
 - [[#which-key][WHICH-KEY]]
+- [[#disable-creating-backup-files][Disable creating backup files]]
 
 * IMPORTANT PROGRAMS TO LOAD FIRST
 ** Elpaca Package Manager
@@ -378,10 +379,21 @@ This is just an example of how to create a simple function in Emacs.  Use this f
 #+end_src
 * THEME
 The first of the two lines below designates the directory where will place all of our themes.  The second line loads our chosen theme which is *dtmacs*, a theme that I created with the help of the [[https://emacsfodder.github.io/emacs-theme-editor/][Emacs Theme Editor]].
+;;(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
+;;(load-theme 'dtmacs t)
 
 #+begin_src emacs-lisp
-(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
-(load-theme 'dtmacs t)
+  (add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
+  (use-package doom-themes
+  :config
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  ;; Sets the default theme to load!!! 
+  (load-theme 'doom-one t)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
 #+end_src
 
 * WHICH-KEY
@@ -404,4 +416,9 @@ The first of the two lines below designates the directory where will place all o
           which-key-max-description-length 25
           which-key-allow-imprecise-window-fit t
           which-key-separator " → " ))
+#+end_src
+
+* Disable creating backup files
+#+begin_src elisp
+(setq make-backup-files nil) ; stop creating ~ files
 #+end_src

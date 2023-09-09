@@ -248,7 +248,16 @@
       "fU" '(sudo-edit :wk "Sudo edit file")))
 
 (add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
-(load-theme 'dtmacs t)
+(use-package doom-themes
+:config
+(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+      doom-themes-enable-italic t) ; if nil, italics is universally disabled
+;; Sets the default theme to load!!! 
+(load-theme 'doom-one t)
+;; Enable custom neotree theme (all-the-icons must be installed!)
+(doom-themes-neotree-config)
+;; Corrects (and improves) org-mode's native fontification.
+(doom-themes-org-config))
 
 (use-package which-key
   :init
@@ -267,3 +276,5 @@
         which-key-max-description-length 25
         which-key-allow-imprecise-window-fit t
         which-key-separator " → " ))
+
+(setq make-backup-files nil) ; stop creating ~ files
