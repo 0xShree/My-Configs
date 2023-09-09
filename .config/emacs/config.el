@@ -111,8 +111,10 @@
         "h f" '(describe-function :wk "Describe function")
         "h v" '(describe-variable :wk "Describe variable")
         ;;"h r r" '((lambda () (interactive) (load-file "~/.config/emacs/init.el")) :wk "Reload emacs config"))
-        "h r r" '(reload-init-file :wk "Reload emacs config"))
-  (dt/leader-keys
+        "h r r" '((lambda () (interactive)
+                (load-file "~/.config/emacs/init.el")
+                (ignore (elpaca-process-queues)))
+(dt/leader-keys   
       "t" '(:ignore t :wk "Toggle")
       "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
       "t t" '(visual-line-mode :wk "Toggle truncated lines"))
