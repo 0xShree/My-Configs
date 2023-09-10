@@ -4,7 +4,6 @@
 #+STARTUP: showeverything
 #+OPTIONS: toc:2
 
-
 * TABLE OF CONTENTS :toc:
 - [[#important-programs-to-load-first][IMPORTANT PROGRAMS TO LOAD FIRST]]
   - [[#elpaca-package-manager][Elpaca Package Manager]]
@@ -73,7 +72,6 @@
 #+end_src
 
 ** Load Evil mode
-
 #+begin_src emacs-lisp
   ;; Install use-package support
   (elpaca elpaca-use-package
@@ -154,18 +152,22 @@
       "h f" '(describe-function :wk "Describe function")
       "h v" '(describe-variable :wk "Describe variable")
       ;;"h r r" '((lambda () (interactive) (load-file "~/.config/emacs/init.el")) :wk "Reload emacs config"))
+      ;;"h r r" '((lambda () (interactive)
+      ;;	    (load-file "~/.config/emacs/init.el")
+      ;;	    (ignore (elpaca-process-queues)))
+      ;;            :wk "Reload emacs config")
       "h r r" '((lambda () (interactive)
                   (load-file "~/.config/emacs/init.el")
                   (ignore (elpaca-process-queues)))
-                (dt/leader-keys   
-                  "t" '(:ignore t :wk "Toggle")
-                  "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
-                  "t t" '(visual-line-mode :wk "Toggle truncated lines"))
-                )
+                :wk "Reload emacs config"))
+    (dt/leader-keys   
+      "t" '(:ignore t :wk "Toggle")
+      "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
+      "t t" '(visual-line-mode :wk "Toggle truncated lines")))
 #+end_src
+
 * ALL THE ICONS
-This is an icon set that can be used with dashboard, dired, ibuffer and other Emacs programs.
-  
+This is an icon set that can be used with dashboard, dired, ibuffer and other Emacs programs.  
 #+begin_src emacs-lisp
   (use-package all-the-icons
     :ensure t
@@ -177,7 +179,6 @@ This is an icon set that can be used with dashboard, dired, ibuffer and other Em
 
 * DASHBOARD
 Emacs Dashboard is an extensible startup screen showing you recent files, bookmarks, agenda items and an Emacs banner.
-
 #+begin_src emacs-lisp
   (use-package dashboard
     :ensure t 
@@ -208,7 +209,6 @@ This package implements hiding or abbreviation of the modeline displays (lighter
 #+end_src
 
 * FONTS
-
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
                       :font "JetBrains Mono"
@@ -340,6 +340,7 @@ Org-bullets gives us attractive bullets rather than asterisks.
   (use-package org-bullets)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+end_src
+
 * PROJECTILE
 [[https://github.com/bbatsov/projectile][Projectile]] is a project interaction library for Emacs.  It should be noted that many projectile commands do not work if you have set "fish" as the "shell-file-name" for Emacs.  I had initially set "fish" as the "shell-file-name" in the Vterm section of this config, but oddly enough I changed it to "bin/sh" and projectile now works as expected, and Vterm still uses "fish" because my default user "sh" on my Linux system is "fish".
 
@@ -379,12 +380,13 @@ This is just an example of how to create a simple function in Emacs.  Use this f
       "fu" '(sudo-edit-find-file :wk "Sudo find file")
       "fU" '(sudo-edit :wk "Sudo edit file")))
 #+end_src
+
 * THEME
 The first of the two lines below designates the directory where will place all of our themes.  The second line loads our chosen theme which is *dtmacs*, a theme that I created with the help of the [[https://emacsfodder.github.io/emacs-theme-editor/][Emacs Theme Editor]].
 
 #+begin_src emacs-lisp
-;;(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
-;;(load-theme 'dtmacs t)
+  ;;(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
+  ;;(load-theme 'dtmacs t)
   (add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
   (use-package doom-themes
     :config
@@ -399,7 +401,6 @@ The first of the two lines below designates the directory where will place all o
 #+end_src
 
 * WHICH-KEY
-
 #+begin_src emacs-lisp
   (use-package which-key
     :init

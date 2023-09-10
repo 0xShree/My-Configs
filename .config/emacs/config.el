@@ -3,9 +3,9 @@
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-			      :ref nil
-			      :files (:defaults (:exclude "extensions"))
-			      :build (:not elpaca--activate-package)))
+                              :ref nil
+                              :files (:defaults (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
 (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
        (build (expand-file-name "elpaca/" elpaca-builds-directory))
        (order (cdr elpaca-order))
@@ -15,18 +15,18 @@
     (make-directory repo t)
     (when (< emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
-	(if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-		 ((zerop (call-process "git" nil buffer t "clone"
-				       (plist-get order :repo) repo)))
-		 ((zerop (call-process "git" nil buffer t "checkout"
-				       (or (plist-get order :ref) "--"))))
-		 (emacs (concat invocation-directory invocation-name))
-		 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-				       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-		 ((require 'elpaca))
-		 ((elpaca-generate-autoloads "elpaca" repo)))
-	    (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-	  (error "%s" (with-current-buffer buffer (buffer-string))))
+        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                 ((zerop (call-process "git" nil buffer t "clone"
+                                       (plist-get order :repo) repo)))
+                 ((zerop (call-process "git" nil buffer t "checkout"
+                                       (or (plist-get order :ref) "--"))))
+                 (emacs (concat invocation-directory invocation-name))
+                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                 ((require 'elpaca))
+                 ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
       ((error) (warn "%s" err) (delete-directory repo 'recursive))))
   (unless (require 'elpaca-autoloads nil t)
     (require 'elpaca)
@@ -36,89 +36,93 @@
 (elpaca `(,@elpaca-order))
 
 ;; Install use-package support
-      (elpaca elpaca-use-package
-	;; Enable :elpaca use-package keyword.
-	(elpaca-use-package-mode)
-	;; Assume :elpaca t unless otherwise specified.
-	(setq elpaca-use-package-by-default t))
+(elpaca elpaca-use-package
+  ;; Enable :elpaca use-package keyword.
+  (elpaca-use-package-mode)
+  ;; Assume :elpaca t unless otherwise specified.
+  (setq elpaca-use-package-by-default t))
 
-      ;; Block until current queue processed.
-      (elpaca-wait)
+;; Block until current queue processed.
+(elpaca-wait)
 
-      ;;When installing a package which modifies a form used at the top-level
-      ;;(e.g. a package which adds a use-package key word),
-      ;;use `elpaca-wait' to block until that package has been installed/configured.
-      ;;For example:
-      ;;(use-package general :demand t)
-      ;;(elpaca-wait)
+;;When installing a package which modifies a form used at the top-level
+;;(e.g. a package which adds a use-package key word),
+;;use `elpaca-wait' to block until that package has been installed/configured.
+;;For example:
+;;(use-package general :demand t)
+;;(elpaca-wait)
 
-      ;; Expands to: (elpaca evil (use-package evil :demand t))
+;; Expands to: (elpaca evil (use-package evil :demand t))
 (use-package evil
-    :init      ;; tweak evil's configuration before loading it
-    (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
-    (setq evil-want-keybinding nil)
-    (setq evil-vsplit-window-right t)
-    (setq evil-split-window-below t)
-    (evil-mode))
-  (use-package evil-collection
-    :after evil
-    :config
-    (setq evil-collection-mode-list '(dashboard dired ibuffer))
-    (evil-collection-init))
-  (use-package evil-tutor)
+  :init      ;; tweak evil's configuration before loading it
+  (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+  (setq evil-want-keybinding nil)
+  (setq evil-vsplit-window-right t)
+  (setq evil-split-window-below t)
+  (evil-mode))
+(use-package evil-collection
+  :after evil
+  :config
+  (setq evil-collection-mode-list '(dashboard dired ibuffer))
+  (evil-collection-init))
+(use-package evil-tutor)
 
-      ;;Turns off elpaca-use-package-mode current declartion
-      ;;Note this will cause the declaration to be interpreted immediately (not deferred).
-      ;;Useful for configuring built-in emacs features.
-      (use-package emacs :elpaca nil :config (setq ring-bell-function #'ignore))
+;;Turns off elpaca-use-package-mode current declartion
+;;Note this will cause the declaration to be interpreted immediately (not deferred).
+;;Useful for configuring built-in emacs features.
+(use-package emacs :elpaca nil :config (setq ring-bell-function #'ignore))
 
-      ;; Don't install anything. Defer execution of BODY
-      ;;(elpaca nil (message "deferred"))
+;; Don't install anything. Defer execution of BODY
+;;(elpaca nil (message "deferred"))
 
 (use-package general
-          :config
-          (general-evil-setup)
+  :config
+  (general-evil-setup)
 
-          ;; set up 'SPC' as the global leader key
-          (general-create-definer dt/leader-keys
-            :states '(normal insert visual emacs)
-            :keymaps 'override
-            :prefix "SPC" ;; set leader
-            :global-prefix "M-SPC") ;; access leader in insert mode
-      (dt/leader-keys
-          "." '(find-file :wk "Find file")
-          "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
-          "TAB TAB" '(comment-line :wk "Comment lines"))
+  ;; set up 'SPC' as the global leader key
+  (general-create-definer dt/leader-keys
+    :states '(normal insert visual emacs)
+    :keymaps 'override
+    :prefix "SPC" ;; set leader
+    :global-prefix "M-SPC") ;; access leader in insert mode
+  (dt/leader-keys
+    "." '(find-file :wk "Find file")
+    "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
+    "TAB TAB" '(comment-line :wk "Comment lines"))
 
-            (dt/leader-keys
-            "b" '(:ignore t :wk "buffer")
-            "b b" '(switch-to-buffer :wk "Switch buffer")
-            "b i" '(ibuffer :wk "Ibuffer")
-            "b k" '(kill-this-buffer :wk "Kill this buffer")
-            "b n" '(next-buffer :wk "Next buffer")
-            "b p" '(previous-buffer :wk "Previous buffer")
-            "b r" '(revert-buffer :wk "Reload buffer"))
+  (dt/leader-keys
+    "b" '(:ignore t :wk "buffer")
+    "b b" '(switch-to-buffer :wk "Switch buffer")
+    "b i" '(ibuffer :wk "Ibuffer")
+    "b k" '(kill-this-buffer :wk "Kill this buffer")
+    "b n" '(next-buffer :wk "Next buffer")
+    "b p" '(previous-buffer :wk "Previous buffer")
+    "b r" '(revert-buffer :wk "Reload buffer"))
 
-        (dt/leader-keys
-          "e" '(:ignore t :wk "Evaluate")    
-          "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
-          "e d" '(eval-defun :wk "Evaluate defun containing or after point")
-          "e e" '(eval-expression :wk "Evaluate and elisp expression")
-          "e l" '(eval-last-sexp :wk "Evaluate elisp expression before point")
-          "e r" '(eval-region :wk "Evaluate elisp in region")) 
-(dt/leader-keys
-        "h" '(:ignore t :wk "Help")
-        "h f" '(describe-function :wk "Describe function")
-        "h v" '(describe-variable :wk "Describe variable")
-        ;;"h r r" '((lambda () (interactive) (load-file "~/.config/emacs/init.el")) :wk "Reload emacs config"))
-        "h r r" '((lambda () (interactive)
-                (load-file "~/.config/emacs/init.el")
-                (ignore (elpaca-process-queues)))
-(dt/leader-keys   
-      "t" '(:ignore t :wk "Toggle")
-      "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
-      "t t" '(visual-line-mode :wk "Toggle truncated lines"))
- )
+  (dt/leader-keys
+    "e" '(:ignore t :wk "Evaluate")    
+    "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
+    "e d" '(eval-defun :wk "Evaluate defun containing or after point")
+    "e e" '(eval-expression :wk "Evaluate and elisp expression")
+    "e l" '(eval-last-sexp :wk "Evaluate elisp expression before point")
+    "e r" '(eval-region :wk "Evaluate elisp in region")) 
+  (dt/leader-keys
+    "h" '(:ignore t :wk "Help")
+    "h f" '(describe-function :wk "Describe function")
+    "h v" '(describe-variable :wk "Describe variable")
+    ;;"h r r" '((lambda () (interactive) (load-file "~/.config/emacs/init.el")) :wk "Reload emacs config"))
+    ;;"h r r" '((lambda () (interactive)
+    ;;	    (load-file "~/.config/emacs/init.el")
+    ;;	    (ignore (elpaca-process-queues)))
+    ;;            :wk "Reload emacs config")
+"h r r" '((lambda () (interactive)
+              (load-file "~/.config/emacs/init.el")
+              (ignore (elpaca-process-queues)))
+            :wk "Reload emacs config"))
+  (dt/leader-keys   
+    "t" '(:ignore t :wk "Toggle")
+    "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
+    "t t" '(visual-line-mode :wk "Toggle truncated lines")))
 
 (use-package all-the-icons
   :ensure t
@@ -150,24 +154,24 @@
 (use-package diminish)
 
 (set-face-attribute 'default nil
-  :font "JetBrains Mono"
-  :height 110
-  :weight 'medium)
+                    :font "JetBrains Mono"
+                    :height 110
+                    :weight 'medium)
 (set-face-attribute 'variable-pitch nil
-  :font "Ubuntu"
-  :height 120
-  :weight 'medium)
+                    :font "Ubuntu"
+                    :height 120
+                    :weight 'medium)
 (set-face-attribute 'fixed-pitch nil
-  :font "JetBrains Mono"
-  :height 110
-  :weight 'medium)
+                    :font "JetBrains Mono"
+                    :height 110
+                    :weight 'medium)
 ;; Makes commented text and keywords italics.
 ;; This is working in emacsclient but not emacs.
 ;; Your font must have an italic face available.
 (set-face-attribute 'font-lock-comment-face nil
-  :slant 'italic)
+                    :slant 'italic)
 (set-face-attribute 'font-lock-keyword-face nil
-  :slant 'italic)
+                    :slant 'italic)
 
 ;; This sets the default font on all graphical frames created after restarting Emacs.
 ;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
@@ -211,15 +215,15 @@
   :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
   :custom
   (ivy-virtual-abbreviate 'full
-   ivy-rich-switch-buffer-align-virtual-buffer t
-   ivy-rich-path-style 'abbrev)
+                          ivy-rich-switch-buffer-align-virtual-buffer t
+                          ivy-rich-path-style 'abbrev)
   :config
   (ivy-set-display-transformer 'ivy-switch-buffer
                                'ivy-rich-switch-buffer-transformer))
 
 (use-package toc-org
-    :commands toc-org-enable
-    :init (add-hook 'org-mode-hook 'toc-org-enable))
+  :commands toc-org-enable
+  :init (add-hook 'org-mode-hook 'toc-org-enable))
 
 (electric-indent-mode -1)
 
@@ -245,25 +249,27 @@
 
 (use-package sudo-edit
   :config
-    (dt/leader-keys
-      "fu" '(sudo-edit-find-file :wk "Sudo find file")
-      "fU" '(sudo-edit :wk "Sudo edit file")))
+  (dt/leader-keys
+    "fu" '(sudo-edit-find-file :wk "Sudo find file")
+    "fU" '(sudo-edit :wk "Sudo edit file")))
 
-(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
-(use-package doom-themes
-:config
-(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-      doom-themes-enable-italic t) ; if nil, italics is universally disabled
-;; Sets the default theme to load!!! 
-(load-theme 'doom-one t)
-;; Enable custom neotree theme (all-the-icons must be installed!)
-(doom-themes-neotree-config)
-;; Corrects (and improves) org-mode's native fontification.
-(doom-themes-org-config))
+;;(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
+;;(load-theme 'dtmacs t)
+  (add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
+  (use-package doom-themes
+    :config
+    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
+    ;; Sets the default theme to load!!! 
+    (load-theme 'doom-one t)
+    ;; Enable custom neotree theme (all-the-icons must be installed!)
+    (doom-themes-neotree-config)
+    ;; Corrects (and improves) org-mode's native fontification.
+    (doom-themes-org-config))
 
 (use-package which-key
   :init
-    (which-key-mode 1)
+  (which-key-mode 1)
   :diminish
   :config
   (setq which-key-side-window-location 'bottom
