@@ -115,10 +115,10 @@
     ;;	    (load-file "~/.config/emacs/init.el")
     ;;	    (ignore (elpaca-process-queues)))
     ;;            :wk "Reload emacs config")
-"h r r" '((lambda () (interactive)
-              (load-file "~/.config/emacs/init.el")
-              (ignore (elpaca-process-queues)))
-            :wk "Reload emacs config"))
+    "h r r" '((lambda () (interactive)
+                (load-file "~/.config/emacs/init.el")
+                (ignore (elpaca-process-queues)))
+              :wk "Reload emacs config"))
   (dt/leader-keys   
     "t" '(:ignore t :wk "Toggle")
     "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
@@ -188,38 +188,40 @@
 (global-visual-line-mode t)
 
 (use-package counsel
-  :after ivy
-  :config (counsel-mode)
-  :diminish)
+:after ivy
+:diminish
+:config 
+  (counsel-mode)
+  (setq ivy-initial-inputs-alist nil)) ;; removes starting ^ regex in M-x
 
-(use-package ivy
-  :diminish
-  :bind
-  ;; ivy-resume resumes the last Ivy-based completion.
-  (("C-c C-r" . ivy-resume)
-   ("C-x B" . ivy-switch-buffer-other-window))
-  :custom
-  (setq ivy-use-virtual-buffers t)
-  (setq ivy-count-format "(%d/%d) ")
-  (setq enable-recursive-minibuffers t)
-  :config
-  (ivy-mode))
+  (use-package ivy
+    :diminish
+    :bind
+    ;; ivy-resume resumes the last Ivy-based completion.
+    (("C-c C-r" . ivy-resume)
+     ("C-x B" . ivy-switch-buffer-other-window))
+    :custom
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-count-format "(%d/%d) ")
+    (setq enable-recursive-minibuffers t)
+    :config
+    (ivy-mode))
 
-(use-package all-the-icons-ivy-rich
-  :ensure t
-  :init (all-the-icons-ivy-rich-mode 1))
+  (use-package all-the-icons-ivy-rich
+    :ensure t
+    :init (all-the-icons-ivy-rich-mode 1))
 
-(use-package ivy-rich
-  :after ivy
-  :ensure t
-  :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
-  :custom
-  (ivy-virtual-abbreviate 'full
-                          ivy-rich-switch-buffer-align-virtual-buffer t
-                          ivy-rich-path-style 'abbrev)
-  :config
-  (ivy-set-display-transformer 'ivy-switch-buffer
-                               'ivy-rich-switch-buffer-transformer))
+  (use-package ivy-rich
+    :after ivy
+    :ensure t
+    :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
+    :custom
+    (ivy-virtual-abbreviate 'full
+                            ivy-rich-switch-buffer-align-virtual-buffer t
+                            ivy-rich-path-style 'abbrev)
+    :config
+    (ivy-set-display-transformer 'ivy-switch-buffer
+                                 'ivy-rich-switch-buffer-transformer))
 
 (use-package toc-org
   :commands toc-org-enable
@@ -255,17 +257,17 @@
 
 ;;(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
 ;;(load-theme 'dtmacs t)
-  (add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
-  (use-package doom-themes
-    :config
-    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-          doom-themes-enable-italic t) ; if nil, italics is universally disabled
-    ;; Sets the default theme to load!!! 
-    (load-theme 'doom-one t)
-    ;; Enable custom neotree theme (all-the-icons must be installed!)
-    (doom-themes-neotree-config)
-    ;; Corrects (and improves) org-mode's native fontification.
-    (doom-themes-org-config))
+(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
+(use-package doom-themes
+  :config
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  ;; Sets the default theme to load!!! 
+  (load-theme 'doom-one t)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
 
 (use-package which-key
   :init
